@@ -40,7 +40,9 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".ui.generic.AddPlan"
-            android:exported="false" />
+            android:exported="false"
+            android:label="Add Plan"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.main.MainActivity"
             android:exported="true"
@@ -107,6 +109,10 @@
             android:multiprocess="false"
             android:readPermission="${applicationId}.READ"
             android:writePermission="${applicationId}.WRITE" />
+        <provider
+            android:name=".db.EventContentProvider"
+            android:authorities="de.rampro.activitydiary.eventprovider"
+            android:exported="false"/>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"

@@ -77,4 +77,11 @@
         <item>Year</item>
     </string-array>
 
+    <string-array name="repeat_dropdown" translatable="true">
+        <item>Never</item>
+        <item>Every Week</item>
+        <item>Every Month</item>
+        <item>Every year</item>
+    </string-array>
+
 </resources>

@@ -120,7 +120,7 @@ public class BaseActivity extends AppCompatActivity {
                         startActivity(intentsettings);
                         break;
                     case R.id.nav_plan:
-                        Intent intentplan = new Intent(BaseActivity.this, PlanActivity.class);
+                        Intent intentplan = new Intent(BaseActivity.this, AddPlan.class);
                         startActivity(intentplan);
                         break;
 

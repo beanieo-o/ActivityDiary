@@ -42,10 +42,11 @@
         android:layout_marginTop="10dp">
 
         <Spinner
-            android:id="@+id/activity_choose_Spinner"
+            android:id="@+id/spinnerActivities"
             android:layout_width="350dp"
             android:layout_height="50dp"
-            android:layout_marginTop="0dp" />
+            android:layout_marginTop="0dp"
+            android:spinnerMode="dropdown"/>
 
         <Button
             android:id="@+id/add_activity"
@@ -57,21 +58,6 @@
 
     </LinearLayout>
 
-
-    <TextView
-        android:id="@+id/Plan_Repeat_TextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="Repeat"
-        android:textAppearance="@android:style/TextAppearance.Large" />
-
-    <Spinner
-        android:id="@+id/repeat_choose_Spinner"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginTop="10dp" />
 
     <TextView
         android:id="@+id/Plan_Start_TextView"
@@ -88,22 +74,22 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/date_start"
+            android:id="@+id/pdate_start"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="7"
             android:text="@string/desc_start_date"
             android:contentDescription="@string/desc_start_date"
-            android:onClick="showStartDatePickerDialog"/>
+            android:onClick="StartDatePickerDialog"/>
 
         <Button
-            android:id="@+id/time_start"
+            android:id="@+id/ptime_start"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="4"
             android:text="@string/desc_start_time"
             android:contentDescription="@string/desc_start_time"
-            android:onClick="showStartTimePickerDialog"/>
+            android:onClick="StartTimePickerDialog"/>
     </LinearLayout>
 
     <TextView
@@ -121,23 +107,23 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/date_end"
+            android:id="@+id/pdate_end"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="7"
             android:contentDescription="@string/desc_end_date"
             android:singleLine="true"
             android:text="@string/desc_end_date"
-            android:onClick="showEndDatePickerDialog"/>
+            android:onClick="EndDatePickerDialog"/>
 
         <Button
-            android:id="@+id/time_end"
+            android:id="@+id/ptime_end"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="4"
             android:text="@string/desc_end_time"
             android:contentDescription="@string/desc_end_time"
-            android:onClick="showEndTimePickerDialog"/>
+            android:onClick="EndTimePickerDialog"/>
     </LinearLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -156,5 +142,11 @@
             android:singleLine="false" />
 
     </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/buttonAddToCalendar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add to calender" />
 
 </LinearLayout>

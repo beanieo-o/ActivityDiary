@@ -84,7 +84,7 @@ public class LocalDBHelper extends SQLiteOpenHelper {
                 " ('Sleeping', '" + Color.parseColor("#303f9f") + "');");
     }
 
-    public static final int CURRENT_VERSION = 5;
+    public static final int CURRENT_VERSION = 6;
 /*
     For debugging sometimes it is handy to drop a table again. This can easily be achieved in onDowngrade,
     after CURRENT_VERSION is decremented again
@@ -129,7 +129,12 @@ public class LocalDBHelper extends SQLiteOpenHelper {
             createRecentSuggestionsTable(db);
         }
 
-        if (newVersion > 5) {
+        if (oldVersion < 6) {
+            /*upgrade from 5 to 6*/
+            createEventsTable(db);
+        }
+
+        if (newVersion > 6) {
             throw new RuntimeException("Database upgrade to version " + newVersion + " nyi.");
         }
     }
@@ -174,6 +179,18 @@ public class LocalDBHelper extends SQLiteOpenHelper {
                 ");");
     }
 
+    private void createEventsTable(SQLiteDatabase db){
+        String CREATE_EVENTS_TABLE = "CREATE TABLE " + "events" + "("
+                + "_id" + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + "activity_name" + " TEXT,"
+                + "start_date" + " TEXT,"
+                + "end_date" + " TEXT,"
+                + "start_time" + " TEXT,"
+                + "end_time" + " TEXT,"
+                + "note" + " TEXT" + ")";
+        db.execSQL(CREATE_EVENTS_TABLE);
+    }
+
     private void createTablesForVersion(SQLiteDatabase db, int version) {
         db.execSQL("CREATE TABLE " +
                 "activity " +
@@ -207,6 +224,10 @@ public class LocalDBHelper extends SQLiteOpenHelper {
 
         if (version >= 5) {
             createRecentSuggestionsTable(db);
+        }
+
+        if (version >= 6) {
+            createEventsTable(db);
         }
 
     }
