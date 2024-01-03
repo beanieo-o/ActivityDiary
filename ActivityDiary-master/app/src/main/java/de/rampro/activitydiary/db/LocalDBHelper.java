@@ -21,9 +21,15 @@
 package de.rampro.activitydiary.db;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Color;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import de.rampro.activitydiary.ui.plan.Plan;
 
 
 public class LocalDBHelper extends SQLiteOpenHelper {
@@ -187,7 +193,7 @@ public class LocalDBHelper extends SQLiteOpenHelper {
                 + "end_date" + " TEXT,"
                 + "start_time" + " TEXT,"
                 + "end_time" + " TEXT,"
-                + "note" + " TEXT" + ")";
+                + "note" + " TEXT" + ");";
         db.execSQL(CREATE_EVENTS_TABLE);
     }
 
@@ -231,4 +237,6 @@ public class LocalDBHelper extends SQLiteOpenHelper {
         }
 
     }
+
+
 }

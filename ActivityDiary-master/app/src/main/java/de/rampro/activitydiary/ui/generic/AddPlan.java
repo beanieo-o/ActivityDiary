@@ -221,6 +221,15 @@ public class AddPlan extends AppCompatActivity {
             Uri uri = getContentResolver().insert(EventContentProvider.CONTENT_URI, values);
             if (uri != null) {
                 Toast.makeText(this, "事件添加成功", Toast.LENGTH_SHORT).show();
+                Log.i( "AddEventActivity", "Inserted Event URI: " + uri.toString());
+                //可选的，进一步确认数据确实被添加
+                Cursor cursor = getContentResolver().query(uri,null, null, null,null);
+                if (cursor != null && cursor.moveToFirst()) {
+                //读取数据，确认内容
+                    String activityName = cursor.getString(cursor.getColumnIndex( "activity_name"));
+                    Log.i("AddEventActivity", "Event added with name: " + activityName);
+                    cursor.close();
+                }
             } else {
                 Toast.makeText(this, "添加事件失败", Toast.LENGTH_SHORT).show();
             }

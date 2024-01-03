@@ -19,7 +19,160 @@
 
 package de.rampro.activitydiary.ui.plan;
 
+import android.app.DatePickerDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.CalendarView;
+import android.widget.Toolbar;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
+
+import de.rampro.activitydiary.R;
+import de.rampro.activitydiary.db.EventContentProvider;
+import de.rampro.activitydiary.ui.generic.AddPlan;
 import de.rampro.activitydiary.ui.generic.BaseActivity;
+import de.rampro.activitydiary.db.LocalDBHelper;
 
 public class PlanActivity extends BaseActivity {
+    CalendarView calendarView;
+    Button button,add_button;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_plan_overview);
+        //calendarView = findViewById(R.id.calendarView);
+        button = findViewById(R.id.calendarButton);
+        add_button = findViewById(R.id.add_plan);
+        RecyclerView recyclerView = findViewById(R.id.daily_plan);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        /*//calendarView点击事件
+        calendarView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Date date =new Date(calendarView.getDate());
+//                String dateString = dateFormat.format(date);
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(date);
+                String dateString = calendar.get(calendar.YEAR)+"年"+calendar.get(calendar.MONTH)+"月"+ calendar.get(calendar.DAY_OF_MONTH)+"日";
+                //System.out.println();
+                Toast.makeText(PlanActivity.this,"clicked"+dateString,Toast.LENGTH_LONG).show();
+            }
+        });
+        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+            @Override
+            public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
+                String dateString = year+"年"+(month+1)+"月"+ dayOfMonth+"日";
+                //System.out.println();
+                Toast.makeText(PlanActivity.this,"clicked"+dateString,Toast.LENGTH_LONG).show();
+                updatePlanItems(year, month, dayOfMonth);
+            }
+        });*/
+        setSupportActionBar(findViewById(R.id.plan_overview));
+        ActionBar bar = getSupportActionBar();
+        if(bar != null) bar.setDisplayHomeAsUpEnabled(true);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Calendar calendar = Calendar.getInstance();
+
+                // 初始化DatePickerDialog，并设置当前选中的年月
+                DatePickerDialog datePickerDialog = new DatePickerDialog(
+                        PlanActivity.this,
+                        null,
+                        //dateSetListener,
+                        calendar.get(Calendar.YEAR),
+                        calendar.get(Calendar.MONTH),
+                        calendar.get(Calendar.DAY_OF_MONTH));
+
+                datePickerDialog.show();
+
+                // 确认按钮
+                datePickerDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(view -> {
+                    int year = datePickerDialog.getDatePicker().getYear();
+                    int monthOfYear = datePickerDialog.getDatePicker().getMonth() + 1;
+                    int dayOfMonth = datePickerDialog.getDatePicker().getDayOfMonth();
+                    String selectedDate = year + "-" + monthOfYear + "-" + dayOfMonth;
+                    button.setText(selectedDate);
+                    //更新recyclerView
+                    updatePlanItems(year,monthOfYear,dayOfMonth,recyclerView);
+                    datePickerDialog.dismiss();
+                });
+            }
+        });
+
+        add_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentplan = new Intent(PlanActivity.this, AddPlan.class);
+                startActivity(intentplan);
+            }
+        });
+    }
+
+
+    private void updatePlanItems(int year, int month, int dayOfMonth,RecyclerView recyclerView) {
+        String date = year + "-" + month + "-" + dayOfMonth;
+        List<Plan> plans = queryPlansOfDate(date);//new ArrayList<>();
+        /*for (int i = 0; i < 20; i++) {
+            Plan plan = new Plan();
+            plan.setTitle("title1");
+            plan.setTime("13:00");
+            plans.add(plan);
+        }*/
+        Log.i("test", plans.toString());
+        PlanAdapter planAdapter = new PlanAdapter(plans);
+        recyclerView.setAdapter(planAdapter);
+
+    }
+
+    public List<Plan> queryPlansOfDate(String date) {
+        List<Plan> plans = new ArrayList<>();
+        /*LocalDBHelper dbHelper = new LocalDBHelper(this);
+        // 这里使用 SQLiteDatabase 对象来执行查询
+        SQLiteDatabase db = dbHelper.getReadableDatabase();*/
+        Uri uri = EventContentProvider.CONTENT_URI;
+        String[] projection ={"activity_name", "start_time"};
+        String selection = "start_date=?";
+        String[] selectionArgs = {date};
+        Log.i("date", date);
+        String sortOrder = "start_time ASC";
+        Cursor cursor = getContentResolver().query(uri,projection,selection,selectionArgs,sortOrder);
+        if(cursor == null){
+            Log.i("test cursor", "cursor null");
+        }
+        else{
+            Log.i("test cursor", "cursor not null:"+cursor.getCount());
+        }
+        if (cursor.moveToFirst()) {
+            do {
+                // 从 cursor 中获取数据并添加到 plans 列表中
+                Plan plan = new Plan();
+                String name = cursor.getString(cursor.getColumnIndex("activity_name"));
+                String time = cursor.getString(cursor.getColumnIndex("start_time"));
+                plan.setTitle(name);
+                plan.setTime(time);
+                Log.i("test2", name+time);
+                // ... 其他属性 ...
+                plans.add(plan);
+            }while (cursor.moveToNext());
+        }
+        Log.i("test1", plans.toString());
+        cursor.close();
+        return plans;
+    }
 }

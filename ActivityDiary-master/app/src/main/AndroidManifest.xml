@@ -98,6 +98,8 @@
         <activity
             android:name=".ui.statistics.StatisticsActivity"
             android:label="@string/activity_title_stats" />
+        <activity android:name=".ui.plan.PlanActivity"
+            android:label="Plans"/>
 
         <provider
             android:name=".db.ActivityDiaryContentProvider"
