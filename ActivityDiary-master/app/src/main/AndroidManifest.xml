@@ -89,6 +89,8 @@
         <activity
             android:name=".ui.generic.PrivacyPolicyActivity"
             android:label="@string/activity_title_privacy_policy" />
+        <activity android:name=".ui.generic.CalendarActivity"
+             />
         <activity
             android:name=".ui.settings.SettingsActivity"
             android:label="@string/activity_title_settings" />
