@@ -26,6 +26,15 @@
     android:layout_height="match_parent"
     tools:context=".ui.generic.AddPlan">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/add_plan_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        app:titleTextColor="@color/activityTextColorLight">
+
+    </androidx.appcompat.widget.Toolbar>
+
     <TextView
         android:id="@+id/Plan_Activity_TextView"
         android:layout_width="match_parent"

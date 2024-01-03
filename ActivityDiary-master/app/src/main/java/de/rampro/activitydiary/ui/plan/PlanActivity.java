@@ -27,6 +27,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CalendarView;
@@ -46,20 +47,30 @@ import de.rampro.activitydiary.db.EventContentProvider;
 import de.rampro.activitydiary.ui.generic.AddPlan;
 import de.rampro.activitydiary.ui.generic.BaseActivity;
 import de.rampro.activitydiary.db.LocalDBHelper;
+import de.rampro.activitydiary.ui.generic.CalendarActivity;
 
 public class PlanActivity extends BaseActivity {
-    CalendarView calendarView;
     Button button,add_button;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plan_overview);
         //calendarView = findViewById(R.id.calendarView);
-        button = findViewById(R.id.calendarButton);
+        button = findViewById(R.id.calendarView);
         add_button = findViewById(R.id.add_plan);
         RecyclerView recyclerView = findViewById(R.id.daily_plan);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        // 获取Intent以及附加的日期信息
+        Intent intent = getIntent();
+        int year = intent.getIntExtra("YEAR", -1); // 默认值为-1
+        int month = intent.getIntExtra("MONTH", -1);
+        int day = intent.getIntExtra("DAY", -1);
+        String selectedDate = year + "-" + month + "-" + day;
+        button.setText(selectedDate);
+
+        updatePlanItems(year,month,day,recyclerView);
         /*//calendarView点击事件
         calendarView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,10 +96,12 @@ public class PlanActivity extends BaseActivity {
         setSupportActionBar(findViewById(R.id.plan_overview));
         ActionBar bar = getSupportActionBar();
         if(bar != null) bar.setDisplayHomeAsUpEnabled(true);
+
+
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Calendar calendar = Calendar.getInstance();
+                /*Calendar calendar = Calendar.getInstance();
 
                 // 初始化DatePickerDialog，并设置当前选中的年月
                 DatePickerDialog datePickerDialog = new DatePickerDialog(
@@ -111,9 +124,13 @@ public class PlanActivity extends BaseActivity {
                     //更新recyclerView
                     updatePlanItems(year,monthOfYear,dayOfMonth,recyclerView);
                     datePickerDialog.dismiss();
-                });
+                });*/
+                Intent intentplan = new Intent(PlanActivity.this, CalendarActivity.class);
+                startActivity(intentplan);
             }
         });
+
+
 
         add_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -175,4 +192,23 @@ public class PlanActivity extends BaseActivity {
         cursor.close();
         return plans;
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // This ID represents the Home or Up button. In the case of this
+                // activity, the Up button is shown. For
+                // more details, see the Navigation pattern on Android Design:
+                // http://developer.android.com/design/patterns/navigation.html#up-vs-back
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
 }
+
+

@@ -35,6 +35,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -42,6 +43,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputEditText;
@@ -50,7 +52,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class AddPlan extends AppCompatActivity {
+public class AddPlan extends BaseActivity {
 
     private Spinner spinnerActivities;
     private TextInputEditText editNote;
@@ -68,6 +70,10 @@ public class AddPlan extends AppCompatActivity {
         ptime_start = findViewById(R.id.ptime_start);
         pdate_end = findViewById(R.id.pdate_end);
         ptime_end = findViewById(R.id.ptime_end);
+
+        setSupportActionBar(findViewById(R.id.add_plan_toolbar));
+        ActionBar bar = getSupportActionBar();
+        if(bar != null) bar.setDisplayHomeAsUpEnabled(true);
 
         // 假设这个方法设置了Spinner的适配器并从数据库中填充数据
         setupSpinnerWithData();
@@ -236,6 +242,22 @@ public class AddPlan extends AppCompatActivity {
         } catch (Exception e) {
             Log.e("AddEventActivity", "数据库操作异常", e);
             Toast.makeText(this, "添加事件时发生错误", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // This ID represents the Home or Up button. In the case of this
+                // activity, the Up button is shown. For
+                // more details, see the Navigation pattern on Android Design:
+                // http://developer.android.com/design/patterns/navigation.html#up-vs-back
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 

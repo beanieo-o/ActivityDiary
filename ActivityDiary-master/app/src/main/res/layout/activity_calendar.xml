@@ -25,13 +25,23 @@
     android:layout_height="match_parent"
     tools:context=".ui.generic.CalendarActivity">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/calendar_view_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        app:titleTextColor="@color/activityTextColorLight"
+        app:title="Calendar"
+        tools:ignore="MissingConstraints">
+
+    </androidx.appcompat.widget.Toolbar>
+
     <CalendarView
         android:id="@+id/calendarView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:shownWeekCount="7"
+        app:layout_constraintTop_toBottomOf="@+id/calendar_view_toolbar"
         tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="-52dp"
-        tools:layout_editor_absoluteY="-2dp" />
+        tools:layout_editor_absoluteX="0dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
