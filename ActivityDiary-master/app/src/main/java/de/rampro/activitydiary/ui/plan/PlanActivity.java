@@ -50,6 +50,9 @@ import de.rampro.activitydiary.db.LocalDBHelper;
 import de.rampro.activitydiary.ui.generic.CalendarActivity;
 
 public class PlanActivity extends BaseActivity {
+    /*button原本做成了点击展开DatePickerDialog，然后将RecyclerView中的内容更新为所选日期的plans，并且将button的text设为所选日期
+    button现在功能为展示从calendarView页面选中的日期，点击可返回calendarView页面
+    add_button实现点击跳转add_plan页面*/
     Button button,add_button;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +74,7 @@ public class PlanActivity extends BaseActivity {
         button.setText(selectedDate);
 
         updatePlanItems(year,month,day,recyclerView);
+
         /*//calendarView点击事件
         calendarView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,15 +97,21 @@ public class PlanActivity extends BaseActivity {
                 updatePlanItems(year, month, dayOfMonth);
             }
         });*/
+
+        //toolbar爆改actionbar，具体原理
         setSupportActionBar(findViewById(R.id.plan_overview));
         ActionBar bar = getSupportActionBar();
         if(bar != null) bar.setDisplayHomeAsUpEnabled(true);
 
 
         button.setOnClickListener(new View.OnClickListener() {
+            //点击button跳转到CalendarActivity
             @Override
             public void onClick(View v) {
-                /*Calendar calendar = Calendar.getInstance();
+                /*
+                //button原本可实现的通过DatePickerDialog更新RecyclerView
+
+                Calendar calendar = Calendar.getInstance();
 
                 // 初始化DatePickerDialog，并设置当前选中的年月
                 DatePickerDialog datePickerDialog = new DatePickerDialog(
@@ -131,7 +141,7 @@ public class PlanActivity extends BaseActivity {
         });
 
 
-
+        //点击add_button跳转到add_plan页面
         add_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -141,40 +151,51 @@ public class PlanActivity extends BaseActivity {
         });
     }
 
-
+    //更新recyclerview的方法
     private void updatePlanItems(int year, int month, int dayOfMonth,RecyclerView recyclerView) {
+        //这里要注意数据转换为字符串的格式与数据库中数据存储的格式是否一致
         String date = year + "-" + month + "-" + dayOfMonth;
         List<Plan> plans = queryPlansOfDate(date);//new ArrayList<>();
-        /*for (int i = 0; i < 20; i++) {
+        /*//本段代码仅作测试用（由于之前数据库查询日期格式不匹配所以用这个样本来检验方法是否能正确把数据放到recyclerview中）
+        for (int i = 0; i < 20; i++) {
             Plan plan = new Plan();
             plan.setTitle("title1");
             plan.setTime("13:00");
             plans.add(plan);
         }*/
+        //通过查看log确认查询函数是否正确输出
         Log.i("test", plans.toString());
         PlanAdapter planAdapter = new PlanAdapter(plans);
         recyclerView.setAdapter(planAdapter);
 
     }
 
+    //数据查询
     public List<Plan> queryPlansOfDate(String date) {
         List<Plan> plans = new ArrayList<>();
-        /*LocalDBHelper dbHelper = new LocalDBHelper(this);
-        // 这里使用 SQLiteDatabase 对象来执行查询
-        SQLiteDatabase db = dbHelper.getReadableDatabase();*/
+        //uri与相应contentProvider绑定
         Uri uri = EventContentProvider.CONTENT_URI;
+        //要查询的列名
         String[] projection ={"activity_name", "start_time"};
+        //查询条件，`?`是占位符
         String selection = "start_date=?";
+        //查询条件中有几个`?`就有几个实际值
         String[] selectionArgs = {date};
+        //查看字符串是否以正确格式转换
         Log.i("date", date);
+        //输出结果顺序
         String sortOrder = "start_time ASC";
+
+        //查询
         Cursor cursor = getContentResolver().query(uri,projection,selection,selectionArgs,sortOrder);
+
         if(cursor == null){
             Log.i("test cursor", "cursor null");
         }
         else{
             Log.i("test cursor", "cursor not null:"+cursor.getCount());
         }
+
         if (cursor.moveToFirst()) {
             do {
                 // 从 cursor 中获取数据并添加到 plans 列表中
@@ -183,16 +204,16 @@ public class PlanActivity extends BaseActivity {
                 String time = cursor.getString(cursor.getColumnIndex("start_time"));
                 plan.setTitle(name);
                 plan.setTime(time);
-                Log.i("test2", name+time);
-                // ... 其他属性 ...
+                //检查属性是否被正确获取
+                Log.i("test2", "title:"+name+"time:"+time);
                 plans.add(plan);
             }while (cursor.moveToNext());
         }
-        Log.i("test1", plans.toString());
         cursor.close();
         return plans;
     }
 
+    //让actionbar起到navigation作用的方法
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
